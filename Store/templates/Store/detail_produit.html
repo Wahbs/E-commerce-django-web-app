@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+{% block content %}
+    <main>
+        <section class="py-5">
+            <div class="container px-4 px-lg-5 mt-5">
+                <div class="row gx-4 gx-lg-5 row-cols-3 row-cols-md-3 row-cols-xl-4 justify-content-center">
+                    {% if not produit.vendu %}
+                        <a href="#" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#vendreProduit">
+                            <i class="bi bi-cart4"></i> Vendu
+                        </a>
+                    {% else %}
+                        <a href="{% url 'annule-produit-vendu' produit.id %}" class="btn btn-outline-dark "><i class="bi bi-cart4"></i> Annuler vente </a>
+                    {% endif %}
+                    <a href="{% url 'modifier-produit' produit.id %}" class="btn btn-outline-dark"><i class="bi bi-pencil-square"></i> modifier</a>
+                    <a href="#" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteProduit" aria-controls="deleteModal">
+                        <i class="bi bi-trash3"></i> Supprimer
+                    </a>
+                    <!-- ############   ENTETE MODAL   ############# -->
+
+                        <!--  ########## MODAL VENDRE PRODUIT   ###############  -->
+                        <div class="modal fade" id="vendreProduit" tabindex="-1" role="dialog" aria-labelledby="ConfirmVente" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="ConfirmVente">Confirmer l'action</h5>
+                                        <button type="button" class="Close" data-bs-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true"><i class="iui-close"></i></span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>Voulez-vous marquer le produit <b>{{produit.designation}}</b> comme vendu ?</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                        <a class="btn btn-primary" href="{% url 'vendu-produit' produit.id %}"> Marquer vendu </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--  ######### FIN MODAL VENDRE  ###############   -->
+
+                        <!--   ################   MODAL SUPPRESSION PRODUIT  #############   -->
+                        <div class="modal fade" id="deleteProduit" tabindex="-1" role="dialog" aria-labelledby="ConfirmDelete" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="ConfirmDelete">Confirmer la suppression</h5>
+                                        <button type="button" class="Close" data-bs-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true"><i class="iui-close"></i></span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>Voulez-vous vraiment supprimer le produit <b>{{produit.designation}}</b> ?</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                        <a class="btn btn-danger" href="{% url 'supprimer-produit' produit.id %}"> Supprimer </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ##########   FIN MODAL SUPPRESSION      ########   -->
+                </div>
+                <br>
+                <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+
+                    {% for image in images %}
+                        <div class="col mb-lg-5">
+                            <div class="card h-100">
+                                <img class="card-img-top produit" src="{{ image.image.url }}" height="220" alt="..." />
+                                <span class="delIcone">
+                                <a href="{% url 'delete-image' image.id %}"><button class="delete-image" type="submit"><i class="iui-close"></i></button></a>
+                                </span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <form action="" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="col mb-lg-5">
+                            <div class="card h-100" >
+                                <label for="id_photo" class="text-center">
+                                    <div class="card-img-top produit text-center">
+                                        <input type="file" name="photo" class="form-control" onchange="this.form.submit()" id="id_photo" multiple hidden>
+                                        <br>
+                                        <i class="bi bi-images" style="font-size:5rem; cursor:pointer"></i>
+                                    </div>
+                                    <span class="text-center" style="cursor:pointer">Ajouter des images</span>
+                                    <br>
+                                </label>
+                                <br><br>
+                            </div>
+                        </div>
+                    </form>
+                    <style>
+                        .Close {
+                            cursor: pointer;
+                            position: absolute;
+                            top: .4rem;
+                            right: .4rem;
+                            border-radius: 50%;
+                            padding: .3rem;
+                            background-color: rgba(0, 0, 0, .5);
+                            border: none;
+                        }
+                        .Close i {
+                            display: block;
+                            color: #fff;
+                            width: 1.4rem;
+                            height: 1.4rem;
+                            font-size: 1.4rem;
+                            line-height: 1.4rem;
+                        }
+                        /* Delete image button */
+                        .delete-image {
+                            display: none;
+                            cursor: pointer;
+                            position: absolute;
+                            top: .2rem;
+                            right: .2rem;
+                            border-radius: 50%;
+                            padding: .3rem;
+                            line-height: 1;
+                            background-color: rgba(0, 0, 0, .5);
+                            -webkit-appearance: none;
+                            border: none;
+                        }
+
+                        .card:hover .delete-image {
+                            display: block;
+                        }
+
+                        .delete-image i {
+                            display: block;
+                            color: #fff;
+                            width: 1.4rem;
+                            height: 1.4rem;
+                            font-size: 1.4rem;
+                            line-height: 1.4rem;
+                        }
+
+                    </style>
+                </div>
+                <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-2 py-3 row-cols-xl-2 justify-content-center">
+                    <table>
+                        <tr>
+                            <td align="left">Designation </td>
+                            <td colspan="2"><h5 class="fw-bolder text-center">{{ produit.designation }}</h5></td>
+                        </tr>
+                        <tr>
+                            <td align="left">Etat </td>
+                            <td colspan="right">
+                                {% if produit.etat_prod == 'Neuf' %}
+                                        <div class="d-flex justify-content-center small text-warning mb-2">
+                                            <div class="bi-star-fill"></div>
+                                            <div class="bi-star-fill"></div>
+                                            <div class="bi-star-fill"></div>
+                                            <div class="bi-star-fill"></div>
+                                            <div class="bi-star-fill"></div>
+                                        </div>
+                                    {% elif produit.etat_prod == 'Occasion' %}
+                                        <div class="d-flex justify-content-center small text-warning mb-2">
+                                            <div class="bi-star-fill"></div>
+                                            <div class="bi-star-fill"></div>
+                                            <div class="bi-star-fill"></div>
+                                            <div class="bi-star-half"></div>
+                                        </div>
+                                    {% else %}
+                                        <div class="d-flex justify-content-center small text-warning mb-2">
+                                            <div class="bi-star-fill"></div>
+                                            <div class="bi-star-fill"></div>
+                                            <div class="bi-star-half"></div>
+                                        </div>
+                                    {% endif %}
+                            </td>
+                            <td align="left"> ({{ produit.etat_prod }}) </td>
+                        </tr>
+                        <tr>
+                            <td align="left">Categorie </td>
+                            <td colspan="2"><h6 class="text-center">{{ produit.categorie_prod }}</h6></td>
+                        </tr>
+                        <tr>
+                            <td align="left">Details </td>
+                            <td colspan="2"><h6 class="text-center">{{ produit.details_prod }}</h6></td>
+                        </tr>
+                        <tr>
+                            <td align="left">Prix </td>
+                            <td colspan="2"><h6 class="text-center">{{ produit.prix_prod }} XAF</h6></td>
+                        </tr>
+                        <tr>
+                            <td align="left">Ville </td>
+                            <td colspan="2"><h6 class="text-center">{{ produit.ville_prod }}</h6></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+                                {% if produit.vendu %}
+                                    <div class="badge bg-danger text-white position-relative" style="top: 0.5rem; right: 0.5rem">vendu</div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+{% endblock %}

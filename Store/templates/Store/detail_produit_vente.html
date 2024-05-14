@@ -1,0 +1,233 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+    <main>
+        <section class="py-5">
+            <div class="container px-4 px-lg-5 mt-5">
+                <a href="#" class="rounded-3 d-flex text-decoration-none text-black p-2">
+                    <div class="col-lg-1">
+                        {% if produit.author.Photo_Profil %} <img src="{{ produit.author.Photo_Profil.url }}" width="70" height="70" class="rounded-circle">
+                        {% else %}<img src="{% static 'default/ppdefaut.png' %}" class="rounded-circle" width="70" height="70">
+                        {% endif %}
+                    </div>
+                    <div class="rounded-3 col-lg-6 px-2 align-items-center d-flex">
+                        <p>{{produit.author.first_name}} {{produit.author.last_name}}</p>
+                    </div>
+                </a>
+                <div class="row gx-4 gx-lg-5 row-cols-3 row-cols-md-3 row-cols-xl-4 justify-content-center">
+                    {% if panier %}
+                        <a href="{% url 'supprime-prod-panier' produit.id %}" class="btn btn-outline-dark "><i class="bi bi-bag-plus"></i> Supprimer du panier </a>
+                    {% else %}
+                        <a href="{% url 'ajout-panier' produit.id %}" class="btn btn-outline-dark "><i class="bi bi-bag-plus-fill"></i> Ajouter au panier </a>
+                    {% endif %}
+
+                    <a href="#" class="btn btn-outline-danger"><i class="bi bi-trash3"></i> Supprimer</a>
+                    <!-- ##############   MODAL  ##############  -->
+                        <!--  MODAL CONTACTER  VENDEUR -->
+
+                                <div class="modal fade" id="exampleModalCenteredScrollable" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle" aria-hidden="true">
+                                  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                    <form action="{% url 'chat-send' %}" class="modal-content">
+                                      <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="exampleModalCenteredScrollableTitle">Contacter vendeur</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                      </div>
+                                      <div class="modal-body">
+                                          <div class="form-container">
+                                            <h1>Message</h1>
+                                            <div class="message">
+                                                <p type="button" class="message-item p-2" id="msg1" onclick="msg1()">Cet article est-il toujours disponible ?</p>
+                                                <p class="message-item p-2" id="msg2" onclick="msg2()">Cet article m'interesse !</p>
+                                                <p class="message-item p-2" id="msg3" onclick="msg3()">Veuillez m'envoyer plus de details sur ce produit.</p>
+                                            </div>
+                                            <input type="hidden" name="user_from" value="{{user.id}}">
+                                            <input type="hidden" name="user_to" value="{{produit.author.id}}">
+                                            <input type="hidden" name="produit" value="{{produit.id}}">
+                                            <textarea class="shadow-sm" placeholder="Entrez votre texte ici..." name="message" id="msg" required></textarea>
+                                          </div>
+                                      </div>
+                                      <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                                        <button type="submit" class="btn btn-primary">Envoyer</button>
+                                      </div>
+                                    </form>
+                                  </div>
+                                </div>
+
+                        <!--  END CONTACTER VENDEUR -->
+
+                    <!-- #############   END MODAL  ###########  -->
+
+                </div>
+                <br>
+                <div class="row p-2 m-2">
+                    <div id="myCarousel" class="col-lg-4 col-12 d-flex justify-content-center align-items-center carousel slide pointer-event shadow-sm rounded-3" data-bs-ride="carousel" style="background:#ccc;height:350px;">
+                        <div class="carousel-indicators">
+                          {% for image in images %}
+                            <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="{{forloop.counter0}}" class="{% if forloop.counter0 == 0 %}active{% endif %}" aria-label="Slide {{forloop.counter}}" aria-current="{% if forloop.counter0 == 0 %}true{% endif %}"></button>
+                          {% endfor %}
+                        </div>
+                        <div class="carousel-inner">
+                            {% for image in images %}
+                              <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}">
+                                <div>
+                                    <img class="card-img" src="{{ image.image.url }}" alt="..." style="max-height:350px;" />
+                                </div>
+                              </div>
+                            {% endfor %}
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
+                          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                          <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#myCarousel" data-bs-slide="next">
+                          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                          <span class="visually-hidden">Next</span>
+                        </button>
+                      </div>
+                    <div class="col-lg-6 col-12 d-flex justify-content-center align-items-center">
+                        <table>
+                            <tr>
+                                <td colspan="3"><h5 class="fw-bold text-center">{{ produit.designation }}</h5></td>
+                            </tr>
+                            <tr>
+                                <td align="left">Etat </td>
+                                <td colspan="right">
+                                    {% if produit.etat_prod == 'Neuf' %}
+                                            <div class="d-flex justify-content-center small text-warning mb-2">
+                                                <div class="bi-star-fill"></div>
+                                                <div class="bi-star-fill"></div>
+                                                <div class="bi-star-fill"></div>
+                                                <div class="bi-star-fill"></div>
+                                                <div class="bi-star-fill"></div>
+                                            </div>
+                                        {% elif produit.etat_prod == 'Occasion' %}
+                                            <div class="d-flex justify-content-center small text-warning mb-2">
+                                                <div class="bi-star-fill"></div>
+                                                <div class="bi-star-fill"></div>
+                                                <div class="bi-star-fill"></div>
+                                                <div class="bi-star-half"></div>
+                                            </div>
+                                        {% else %}
+                                            <div class="d-flex justify-content-center small text-warning mb-2">
+                                                <div class="bi-star-fill"></div>
+                                                <div class="bi-star-fill"></div>
+                                                <div class="bi-star-half"></div>
+                                            </div>
+                                        {% endif %}
+                                </td>
+                                <td align="left"> ({{ produit.etat_prod }}) </td>
+                            </tr>
+                            <tr>
+                                <td align="left">Categorie </td>
+                                <td colspan="2"><h6 class="text-center">{{ produit.categorie_prod }}</h6></td>
+                            </tr>
+                            <tr>
+                                <td align="left">Details </td>
+                                <td colspan="2"><h6 class="text-center">{{ produit.details_prod }}</h6></td>
+                            </tr>
+                            <tr>
+                                <td align="left">Prix </td>
+                                <td colspan="2"><h6 class="text-center">{{ produit.prix_prod }} XAF</h6></td>
+                            </tr>
+                            <tr>
+                                <td align="left">Ville </td>
+                                <td colspan="2"><h6 class="text-center">{{ produit.ville_prod }}</h6></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>
+                                    {% if produit.vendu %}
+                                        <div class="badge bg-danger text-white position-relative" style="top: 0.5rem; right: 0.5rem">vendu</div>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" align="center">
+                                    <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModalCenteredScrollable">
+                                        {% if discussion %}
+                                            <i class="bi bi-pencil-square"></i> Recontacter vendeur
+                                        {% else %}
+                                            <i class="bi bi-pencil-square"></i> Contacter vendeur
+                                        {% endif %}
+                                    </a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </section>
+        <style>
+            /* Add styles to the form container */
+            .form-container {
+              max-width: 75vw;
+              padding: 10px;
+              background-color: white;
+            }
+
+            /* Full-width textarea */
+            .form-container textarea {
+              width: 100%;
+              padding: 10px;
+              margin: 5px 0 22px 0;
+              border: none;
+              background: #f1f1f1;
+              resize: none;
+              min-height: 100px;
+            }
+
+            /* When the textarea gets focus, do something */
+            .form-container textarea:focus {
+              background-color: #ddd;
+              outline: none;
+            }
+
+            /* Add some hover effects to buttons */
+            .form-container .btn:hover, .open-button:hover {
+              opacity: 1;
+            }
+            .message-item{
+                cursor: pointer;
+                background: #ddd;
+                border-radius: 2em;
+            }
+            .message-item:hover{
+                opacity: 0.40;
+                background: black;
+                color: white;
+            }
+            dialog {
+              position: fixed;
+              top: 5vw;
+              max-width: 100vw;
+              border: 1px solid #ededed;
+              box-shadow: 2px 1px 2px 2px #ededed, 2px 2px 2px 2px gray;
+            }
+            dialog::backdrop {
+              background: black;
+              opacity: 0.60;
+            }
+        </style>
+        <script>
+            function openForm() {
+              document.getElementById("chat-popup").showModal();
+            }
+            function closeForm() {
+              document.getElementById("chat-popup").close();
+            }
+            function msg1() {
+                document.getElementById("msg").value = document.getElementById("msg1").textContent ;
+            }
+            function msg2() {
+                document.getElementById("msg").value = document.getElementById("msg2").textContent ;
+            }
+            function msg3() {
+                document.getElementById("msg").value = document.getElementById("msg3").textContent ;
+            }
+        </script>
+    </main>
+{% endblock %}

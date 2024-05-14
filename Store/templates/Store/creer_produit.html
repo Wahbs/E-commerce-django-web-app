@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load widget_tweaks %}
+    <main class="form-signin m-auto">
+      <div class="container col-xl-10 col-xxl-8 px-2 py-3">
+        <div class="row align-items-center">
+          <div class="col-lg-10 col-12 text-center text-lg-start offset-lg-1">
+              <form method="POST" name="form-example-1" id="form-example-1" class="p-4 p-md-5 border rounded-3 bg-light" enctype="multipart/form-data" novalidate>
+                {% csrf_token %}
+
+                <div class="form-control">
+
+                    <div class="input-images-1" style="padding-top: .5rem;">
+                        <div class="top justify-content-center">
+                            <div class="upload-text">
+                                <i class="iui-cloud-upload"></i>
+                                <span class="select" style="cursor:pointer">Cliquer ici pour ajouter des images</span>
+                            </div>
+                        </div>
+                        <div class="image-uploader">
+                            {{ photo_form.photo }}
+                            <div class="uploaded"></div>
+                            <div class="upload-text">
+                                <i class="bi bi-images"></i>
+                                <span class="select">Pas d'image selectionnées</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                  <!-- <script>
+                        window.onload = function(){
+                            $('.input-images-1').imageUploader();
+                            frame.src = URL.createObjectURL(event.target.files[0]);
+                            frame1.src = URL.createObjectURL(event.target.files[1]);
+                            frame2.src = URL.createObjectURL(event.target.files[2]);
+                        }
+                  </script>   -->
+
+              <h1 class="h3 mb-3 fw-normal">Produit</h1>
+
+                {%for field in produit_form %}
+                <div class="row">
+
+                    <div id="drag-drop-area">
+
+                    </div>
+
+                  <label for="floatingInput" class="col-4 text-left"> {{ field.label }} </label>
+                  {% if field.errors %}
+                      <div class="col-8 lg-7">
+                        {{ field }}
+                      </div>
+                      <div class="offset-4 col-8 lg-7 is-invalid text-right">
+                        <small class="text-danger">
+                          {% for error in field.errors %}
+                            {{ error|escape }}
+                            <br/>
+                          {% endfor %}
+                        </small>
+                      </div>
+                  {% else %}
+                    <div class="col-8 lg-7 is-valid">
+                      {{ field }}
+                      <br/>
+                    </div>
+                  {% endif %}
+                </div>
+                {% endfor %}
+              <button class="w-100 btn btn-lg btn-dark" type="submit">Publier</button>
+              <hr class="my-4">
+              <small class="text-muted">En cliquant sur se connecter, vous acceptez nos termes d'utilisations.
+                Ou si vous avez deja un compte vous pouvez <a href="{% url 'inscription' %}">vous connecter</a>
+              </small>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
+{% endblock %}
