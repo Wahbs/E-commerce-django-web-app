@@ -1,0 +1,42 @@
+<style>
+    .delete_msg{
+        display: none;
+    }
+    .chat:hover .delete_msg{
+        display: block;
+        cursor: pointer;
+        position: relative;
+        top: 20%;
+    }
+</style>
+
+    {% for chat in chats %}
+    {% if chat.user_from == user %}
+    <div class="chat p-0 d-flex justify-content-end w-75" style="margin-left:25%;">
+        <a href="{% url 'supprime-msg' chat.id %}"><i class="delete_msg bi bi-trash"></i></a>
+        {% if chat.fichier_message %}
+        <div class="image-message" data-id="{{chat.id}}">
+            <p class="px-2 py-0 m-0"><img class="rounded-3" src="{{chat.fichier_message.url}}" alt="" width="100" height="150"></p>
+        </div>
+        {% else %}
+            <div class="chat-bubble user mb-0 bg-primary text-light rounded-4" data-id="{{chat.id}}">
+                <p class="px-2 fw-light py-0 m-0">{{chat.message}}</p>
+                <!-- <div class="d-flex justify-content-between"><small class="px-3 py-1">You</small> <small class="px-3 py-1">{{chat.date_created|date:"M-d-Y H:i"}}</small></div> -->
+            </div>
+        {% endif %}
+    </div>
+    {% else %}
+    <div class="chat p-0 w-75 d-flex justify-content-start">
+        {% if chat.fichier_message %}
+            <div class="image-message " data-id="{{chat.id}}">
+                <p class="px-2 py-0 m-0"><img class="rounded-3" src="{{chat.fichier_message.url}}" alt="" width="100" height="150"></p>
+            </div>
+        {% else %}
+            <div class="chat-bubble not_user mb-0 text-dark rounded-4" data-id="{{chat.id}}">
+                <p class="px-2 fw-light m-0">{{chat.message}}</p>
+                <!-- <div class=" d-flex justify-content-between"><small class="px-3 py-1">Sender</small> <small class="px-3 py-1">{{chat.date_created|date:"M-d-Y H:i"}}</small></div> -->
+            </div>
+        {% endif %}
+        <a href="{% url 'supprime-msg' chat.id %}"><i class="delete_msg bi bi-trash"></i></a>
+    </div>
+    {% endif %} {% endfor %}

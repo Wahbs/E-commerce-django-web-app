@@ -1,0 +1,16 @@
+{% for chat in chats %}
+{% if chat.user_from == user %}
+<div class="p-2 d-flex justify-content-end w-75" style="margin-left:25%;">
+    <div class="chat-bubble user ml-2 mb-2 bg-primary text-light rounded-5" data-id="{{chat.id}}">
+        <p class="px-3 py-1">{{chat.message}}</p>
+        <!-- <div class="d-flex justify-content-between"><small class="px-3 py-1">You</small> <small class="px-3 py-1">{{chat.date_created|date:"M-d-Y H:i"}}</small></div> -->
+    </div>
+</div>
+{% else %}
+<div class="p-2 w-75 d-flex justify-content-start">
+    <div class="chat-bubble not_user mr-2 mb-2 bg-light text-dark rounded-5" data-id="{{chat.id}}">
+        <p class="px-3 py-1">{{chat.message}}</p>
+        <!-- <div class=" d-flex justify-content-between"><small class="px-3 py-1">Sender</small> <small class="px-3 py-1">{{chat.date_created|date:"M-d-Y H:i"}}</small></div> -->
+    </div>
+</div>
+{% endif %} {% endfor %}

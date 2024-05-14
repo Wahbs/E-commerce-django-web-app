@@ -1,0 +1,369 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<style>
+    .loader {
+          display: block;
+          position: absolute;
+          top: 15vw;
+          left: 50vw;
+          border: 3px solid #f3f3f3; /* Light grey */
+          border-top: 3px solid #3498db; /* Blue */
+          border-radius: 50%;
+          width: 30px;
+          height: 30px;
+          animation: spin 0.5s linear infinite;
+        }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    textarea {
+        resize: none;
+        overflow: hidden;
+        max-height: 100px !important;
+    }
+    #user-list a.bg-dark {
+        background-color: rgb(107, 107, 107) !important;
+    }
+    .a_user{
+        background: #e8e8e8 !important;
+        color:black !important;
+    }
+
+    .entete:hover{
+        cursor: pointer;
+        background: #e8e8e8 !important;
+        border-radius: 2px;
+    }
+    .discussion{
+        -webkit-box-shadow: 0px 10px 13px -7px #000000, 5px 5px 15px 5px rgba(0,0,0,0);
+        box-shadow: 0px 10px 13px -7px #000000, 5px 5px 15px 5px rgba(0,0,0,0);
+    }
+
+    .not_user {
+        background-color: #e8e8e8 !important;
+        color:black !important;
+    }
+
+    .list-group-item:hover {
+        background: #e8e8e8 !important;
+    }
+
+    .list-group {
+        height : auto;
+        min-height : 350px;
+        max-height : 350px;
+        overflow : auto;
+    }
+
+    .chat-bubble {
+        min-width: 5%;
+        max-width: 80%;
+        padding: 3px 3px 3px 3px;
+        margin: 3px 3px 3px 3px;
+    }
+    .chat-bubble p  {
+        font-size: 0.9rem;
+    }
+    @media screen and (min-width: 600px){
+        .chat-bubble p  {
+        font-size: 1.1rem;
+        }
+    }
+    #user-list a:hover * {
+        text-decoration: unset;
+    }
+
+    .chat-box {
+        opacity: 0;
+        overflow: auto;
+        height: auto;
+        max-height : 350px;
+        min-height : 300px;
+        max-width: 100%;
+    }
+
+    .image-uploader {
+        height:100px !important;
+    }
+    .text-court {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+    dialog {
+        position: fixed;
+        top: 5vw;
+        max-width: 100vw;
+        border: 1px solid #ededed;
+        box-shadow: 2px 1px 2px 2px #ededed, 2px 2px 2px 2px gray;
+    }
+    dialog::backdrop {
+        background: black;
+        opacity: 0.60;
+    }
+
+    .Close {
+        cursor: pointer;
+        position: absolute;
+        top: .4rem;
+        right: .4rem;
+        border-radius: 50%;
+        padding: .3rem;
+        background-color: rgba(0, 0, 0, .5);
+        border: none;
+    }
+    .Close i {
+        display: block;
+        color: #fff;
+        width: 1.4rem;
+        height: 1.4rem;
+        font-size: 1.4rem;
+        line-height: 1.4rem;
+    }
+</style>
+<div class="container p-1" id="mainPage" style="height:75%;opacity:0;">
+    <div class="card discussion bg-light border-dark py-1 my-1">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-5 bg-transparent">
+                    <div class="row">
+                        <div class="col-lg-12 p-0 m-0">
+                            <h2 class="fw-bolder p-2">Discussion</h2>
+                            <input type="text" class="form-control rounded-5 my-3" placeholder="  Recherche discussion">
+                            <div class="col-lg-12 py-1">
+                                <div class="list-group bg-light p-0 m-0" id='user-list'>
+                                    <!-- LIST UTILISATEUR   -->
+
+                                    {% for inbox in discussions %} {% if not inbox.user.id == user.id %} {% if inbox.produit %}
+                                        <a class="list-group-item {% if inbox.produit.id != produit_id %}bg-light text-black{% else %}a_user{% endif %}"
+                                           href="{% url 'home-chat' %}?u={{inbox.user.id}}/{{inbox.produit.id}}">
+                                            <div class="row">
+                                                <div class="col-2 px-1">
+                                                    {% if inbox.photo.image %} <img src="{{ inbox.photo.image.url }}" width="55" height="55" class="rounded-circle">
+                                                    {% else %}<img src="{% static 'default/ppdefaut.png' %}" class="rounded-circle" width="55" height="55">
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-10">
+                                                    <div class="row">
+                                                        <div class="col-11">
+                                                            <p class="text-court py-0 m-0 px-1 ">{{inbox.user.username}}<i class="bi bi-dot fw-bolder"></i>({{inbox.produit.designation}})</p>
+                                                        </div>
+                                                        <div class="col-1 p-0">
+                                                            <span class="badge bg-primary text-white ms-1 rounded-pill" style="font-size:0.6rem;">{% if inbox.NonLu %} {{inbox.NonLu}} {% endif %}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-9">
+                                                            <p class="text-court py-0 px-1 m-0 text-muted">
+                                                                {% if inbox.dernier_msg.fichier_message %}
+                                                                    {% if inbox.NonLu %}<span class="text-primary"><i class="bi bi-image"> </i> Photo </span>
+                                                                    {% else %} <i class="bi bi-image"> </i> Photo
+                                                                    {% endif %}
+                                                                {% else %}
+                                                                    {% if inbox.NonLu %} <span class="text-primary">{{ inbox.dernier_msg }}</span>
+                                                                    {% else %} {{ inbox.dernier_msg }}
+                                                                    {% endif %}
+                                                                {% endif %}
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-3 p-0 text-muted d-flex justify-content-end" style="font-size:12px;">
+                                                            <small>{{ inbox.date }}</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    {% endif %} {% endif %} {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-7">
+                    <div class="row p-0 border-start border-primary m-0">
+                        <div class="col-lg-12 p-0 m-0">
+                            <div class="row m-1 shadow-sm" style="height:15%;">
+                                {% for u in discussions %} {% if u.produit.id == produit_id %}
+                                <a href="#" class="entete rounded-3 d-flex text-decoration-none text-black p-2" onclick="openForm()">
+                                    <div class="col-lg-2">
+                                        {% if u.photo.image %} <img src="{{ u.photo.image.url }}" width="50" height="50" class="rounded-circle">
+                                        {% else %}<img src="{% static 'default/ppdefaut.png' %}" class="rounded-circle" width="50" height="50">
+                                        {% endif %}
+                                    </div>
+                                    <div class="rounded-3 col-lg-6 px-1">
+                                        <p>{{u.user.username}} ({{u.produit.designation}})</p>
+                                    </div>
+                                </a>
+                                <!--  MODAL DETAIL  DISCUSSION -->
+                                    <dialog class="chat-popup w-50" id="chat-popup">
+                                        <div>
+                                            <button type="button" class="Close" onclick="closeForm()">
+                                                <span aria-hidden="true"><i class="iui-close"></i></span>
+                                            </button>
+                                            <a href="{% url 'detail-produit-vente' u.produit.id %}" class="text-decoration-none">
+                                                <div class="entete rounded-4 w-80 d-flex align-items-center justify-content-center" style="height:100px">
+                                                    Detail du produit
+                                                </div>
+                                            </a>
+                                            <a href="{% url 'profil-vendeur' u.produit.author.id %}" class="text-decoration-none">
+                                                <div class="entete rounded-4 w-80 d-flex align-items-center justify-content-center" style="height:100px">
+                                                    Profil du vendeur
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </dialog>
+                                    <!--  END DETAILS DISCUSSION -->
+                                {% endif %}{% endfor %}
+                            </div>
+                            <div class="row p-0 m-0" style="">
+                                <div class="col-lg-12 p-0 m-0">
+                                    {% if not chat_id > 0 %}
+                                    <div class="py-5 d-flex h-100 flex-column justify-content-center align-items-center">
+                                        <h3>Start Chat now</h3>
+                                        <p><small class="text-muted">Please select a person to chat with.</small></p>
+                                    </div>
+                                    {% else%}
+                                    <div id="chat-box-field" class="p-0">
+                                        <div class="loader" id="loader"></div>
+                                        <div class="chat-box bg-light p-2 shadow-sm" id="chat-box" style="">
+                                        <!-- Les données du chat à charger -->
+                                        {% for chat in chats %}
+                                            {% if chat.user_from == user %}
+                                            <div class="p-0 d-flex justify-content-end w-75" style="margin-left:25%;">
+                                                {% if chat.fichier_message %}
+                                                <div class="image-message" data-id="{{chat.id}}">
+                                                    <p class="px-2 m-0 py-0"><img class="rounded-2" src="{{chat.fichier_message.url}}" alt="" width="100" height="150"></p>
+                                                </div>
+                                                {% else %}
+                                                    <div class="chat-bubble user mb-0 bg-primary text-light rounded-4" data-id="{{chat.id}}">
+                                                        <p class="px-2 m-0 py-0">{{chat.message}}</p>
+                                                        <!-- <div class="d-flex justify-content-between"><small class="px-3 py-1">You</small> <small class="px-3 py-1">{{chat.date_created|date:"M-d-Y H:i"}}</small></div> -->
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            {% else %}
+                                            <div class="p-0 w-75 d-flex justify-content-start">
+                                                {% if chat.fichier_message %}
+                                                    <div class="image-message" data-id="{{chat.id}}">
+                                                        <p class="px-2 py-0 m-0"><img class="rounded-2" src="{{chat.fichier_message.url}}" alt="" width="100" height="150"></p>
+                                                    </div>
+                                                {% else %}
+                                                    <div class="chat-bubble not_user mb-0 text-dark rounded-4" data-id="{{chat.id}}">
+                                                        <p class="px-2 m-0">{{chat.message}}</p>
+                                                        <!-- <div class=" d-flex justify-content-between"><small class="px-3 py-1">Sender</small> <small class="px-3 py-1">{{chat.date_created|date:"M-d-Y H:i"}}</small></div> -->
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            {% endif %} {% endfor %}
+
+                                        <!-- les chats a afficher sont dans un autre fichier  -->
+                                    </div>
+                                        <div class="chat-box-form border-top p-2" style="height:10%">
+                                            <div class="w-100 px-1">
+                                                <form method="POST" action="{% url 'chat-send' %}" id="chat-submit" class="d-flex" enctype="multipart/form-data" novalidate>
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="user_from" value="{{ user.id }}">
+                                                    <input type="hidden" name="user_to" value="{{ chat_id }}">
+                                                    <input type="hidden" name="produit" value="{{ produit_id }}">
+                                                    <div class="col-md-10">
+                                                        <div class="row">
+                                                            <div class="input-images-1" id="input-image" style="padding-top: .5rem; display: none;">
+                                                                <div class="top justify-content-center">
+                                                                    <div class="upload-text">
+                                                                        <i class="iui-cloud-upload"></i>
+                                                                        <span class="select" id="selectTof" style="cursor:pointer">Cliquer ici pour ajouter des images</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="image-uploader" id="image-uploader">
+                                                                    <input type="file" name="photo" id="photo_id" multiple accept="image/*" hidden>
+                                                                    <div class="uploaded"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row d-flex">
+                                                            <div class="col-1 p-0">
+                                                                <div class="upload-text">
+                                                                    <label for="photo_id">
+                                                                        <i class="bi bi-file-earmark-image text-primary" style="font-size:1.5rem; cursor:pointer;"></i>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-9 p-0">
+                                                                <textarea name="message" id="message" rows="1" class="w-100 form-control d-flex rounded-5" placeholder="Ecrire..."></textarea>
+                                                            </div>
+                                                            <div class="col-1 p-0">
+                                                                <button type="submit" class="btn btn-primary px-2 mx-2 py-0 rounded-circle d-flex">
+                                                                    <i class="bi bi-send-fill" style="rotate:45deg; font-size:1.5rem;"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    window.onload = Chargement;
+    function Chargement() {
+        document.getElementById("mainPage").style.opacity = "1";
+        var myVar = setTimeout(showPage, 500);
+    }
+
+    function showPage() {
+      document.getElementById("loader").style.display = "none";
+      /* document.getElementById("chat-box-field").style.display = "block"; */
+        defil();
+        document.getElementById("chat-box").style.opacity = "1";
+    }
+
+    function defil() {
+        var myDiv = document.getElementById('chat-box');
+        myDiv.scrollTop = myDiv.scrollHeight;
+	};
+
+    setInterval('actualise()',2500);
+    function actualise(){
+        $('#chat-box').load('/actualise_chat' + '/' + {{chat_id}} + '/' + {{produit_id}});
+        $('#user-list').load('/actualise_discussion' + '/' + {{chat_id}} + '/' + {{produit_id}});
+    }
+
+    function openForm() {
+      document.getElementById("chat-popup").showModal();
+    }
+    function closeForm() {
+      document.getElementById("chat-popup").close();
+    }
+
+    /* Rendre la zone de saisie auto-dimensinnable */
+        const txHeight = 16;
+        const tx = document.getElementsByTagName("textarea");
+        for (let i = 0; i < tx.length; i++){
+            if (tx[i].value == ''){
+                tx[i].setAttribute("style", "height:" + txHeight + "px; overflow-y: hidden;");
+            }
+            else {
+                tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px; overflow-y: hidden;");
+            }
+            tx[i].addEventListener("input", OnInput, false);
+        }
+        function OnInput(e){
+            this.style.height = 0;
+            this.style.height = (this.scrollHeight) + "px";
+        }
+</script>
+
+
+
+{% endblock %}

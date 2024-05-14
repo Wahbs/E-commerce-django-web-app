@@ -1,0 +1,53 @@
+{% load static %}
+<style>
+    .a_user{
+        background: #e8e8e8 !important;
+    }
+    .text-court {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+</style>
+
+{% for inbox in discussions %} {% if not inbox.user.id == user.id %} {% if inbox.produit %}
+    <a class="list-group-item {% if inbox.produit.id != produit_id %}bg-light text-black{% else %}a_user{% endif %}"
+       href="{% url 'home-chat' %}?u={{inbox.user.id}}/{{inbox.produit.id}}">
+        <div class="row">
+            <div class="col-2 px-1">
+                {% if inbox.photo.image %} <img src="{{ inbox.photo.image.url }}" width="55" height="55" class="rounded-circle">
+                {% else %}<img src="{% static 'default/ppdefaut.png' %}" class="rounded-circle" width="55" height="55">
+                {% endif %}
+            </div>
+            <div class="col-10">
+                <div class="row">
+                    <div class="col-11">
+                        <p class="text-court py-0 px-1 m-0">{{inbox.user.username}}<i class="bi bi-dot p-0 m-0 fw-bolder"></i>({{inbox.produit.designation}})</p>
+                    </div>
+                    <div class="col-1 p-0">
+                        <span class="badge bg-primary text-white ms-1 rounded-pill" style="font-size:0.6rem;">{% if inbox.NonLu %} {{inbox.NonLu}} {% endif %}</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-9">
+                        <p class="text-court py-0 px-1 m-0 text-muted">
+                            {% if inbox.dernier_msg.fichier_message %}
+                                {% if inbox.NonLu %}<span class="text-primary"><i class="bi bi-image"> </i> Photo </span>
+                                {% else %} <i class="bi bi-image"> </i> Photo
+                                {% endif %}
+                            {% else %}
+                                {% if inbox.NonLu %} <span class="text-primary">{{ inbox.dernier_msg }}</span>
+                                {% else %} {{ inbox.dernier_msg }}
+                                {% endif %}
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="col-3 p-0 m-0 text-muted d-flex justify-content-end" style="font-size:12px;">
+                        <small class="">{{ inbox.date }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </a>
+    {% endif %} {% endif %} {% endfor %}
