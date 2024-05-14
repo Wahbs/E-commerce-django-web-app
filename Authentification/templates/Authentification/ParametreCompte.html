@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<main>
+  <div class="container  mt-2">
+    <h2>Informations</h2>
+    <div class="row justify-content-center">
+      <div class="col mb-5 h-lg-100">
+        <div class="row py-3">
+          <div class="col-lg-5">
+            {% if user.Photo_Profil %}
+              <img src="{{ user.Photo_Profil.url }}" class="rounded-circle" alt="" width="150" height="150">
+            {% else %}
+              <img src="{% static 'default/ppdefaut.png' %}" class="rounded-circle" alt="" width="150" height="150">
+            {% endif %}
+            <hr class="my-4">
+            <div class="h5">{{ user.username }}</div>
+            <a href="{% url 'upload-photo' %}" class="text-decoration-none"><small> Modifier la photo de profil</small></a> <br>
+            <a href="{% url 'update-profile' %}" class="text-decoration-none"><small> Modifier mes infos personnelles</small></a><br>
+            <a href="{% url 'update-password' %}" class="text-decoration-none"><small> Modifier mon mot de passe</small></a> <br>
+            <hr class="my-4"/>
+            <a href="{% url 'log-out' %}" class="text-decoration-none"> Se deconnecter </a> <br>
+          </div>
+          <div class="col-lg-7 col-12 py-3">
+            <div class="row py-4 px-2">
+              <div class="col-12 col-lg-8">
+                <table>
+                  <tr>
+                    <td class="col-4 col-form-label text-left">Nom : </td>
+                    <td class="col-4 col-form-label text-left">{{ user.last_name }}</td>
+                  </tr>
+                  <tr>
+                    <td class="col-4 col-form-label text-left">Prenom : </td>
+                    <td class="col-4 col-form-label text-left">{{ user.first_name }}</td>
+                  </tr>
+                  <tr>
+                    <td class="col-4 col-form-label text-left">Sexe : </td>
+                    <td class="col-4 col-form-label text-left">{{ user.Sexe }}</td>
+                  </tr>
+                  <tr>
+                    <td class="col-4 col-form-label text-left">Date de naissance : </td>
+                    <td class="col-4 col-form-label text-left">{{ user.DateNaiss }}</td>
+                  </tr>
+                  <tr>
+                    <td class="col-4 col-form-label text-left">Email : </td>
+                    <td class="col-4 col-form-label text-left">{{ user.email }}</td>
+                  </tr>
+
+                  <tr>
+                    <td class="col-4 col-form-label text-left"> </td>
+                    <td class="col-4 col-form-label text-left"> </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2" class="text-center">  </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+{% endblock %}

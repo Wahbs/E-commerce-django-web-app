@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+<main>
+  <div class="container px-4 px-lg-5 mt-5">
+    <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+      <div class="col mb-5 h-lg-100">
+        <div class="row py-3">
+          <h2>Informations supplementaire</h2>
+          <div class="col-lg-2">
+
+          </div>
+          <div class="col-lg-9 py-3">
+            <div class="row py-4 px-2">
+              <div class="col-8">
+                <form action="" method="post" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  {{ form.as_p }}
+                  <button type="submit" class="btn btn-primary">Charger</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+{% endblock %}

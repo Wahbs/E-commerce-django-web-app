@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<main>
+  <div class="container px-4 px-lg-5 mt-2">
+    <h2>Informations</h2>
+    <div class="row justify-content-center">
+      <div class="col mb-5 h-lg-100">
+        <div class="row py-lg-3">
+          <div class="col-lg-3">
+            {% if user.Photo_Profil %}
+              <img src="{{ user.Photo_Profil.url }}" class="rounded-circle" alt="" width="150" height="150">
+            {% else %}
+              <img src="{% static 'default/ppdefaut.png' %}" class="rounded-circle" alt="" width="150" height="150">
+            {% endif %}
+            <hr class="my-4">
+            <div class="h5">{{ user.username }}</div>
+            <a href="{% url 'upload-photo' %}" class="text-decoration-none"><small> Modifier la photo de profil</small></a> <br>
+            <a href="{% url 'update-profile' %}" class="text-decoration-none"><small> Modifier mes infos personnelles</small></a><br>
+            <a href="{% url 'update-password' %}" class="text-decoration-none"><small> Modifier mon mot de passe</small></a> <br>
+            <hr class="my-4"/>
+            <a href="{% url 'log-out' %}" class="text-decoration-none"> Se deconnecter </a> <br>
+          </div>
+          <div class="col-12 col-lg-9 py-3">
+            <div class="row py-2 px-lg-2">
+              <div class="col-10 col-lg-10">
+                {% if url == 'upload-photo' %}
+                  <form method="post" class="offset-lg-1 col-lg-12 px-2 p-md-5 border rounded-3 bg-light" enctype="multipart/form-data" novalidate>
+                    <div class="container col-md-6">
+                        <label class="">
+                          {% csrf_token %}
+                          {% for field in form %}
+                            {{ field }}
+                          {% endfor %}
+                            {% if user.Photo_Profil %}
+                              <img id="frame" src="{{ user.Photo_Profil.url }}" class="card-img-top" alt="" width="200" height="200">
+                            {% else %}
+                              <img id="frame" src="{% static 'default/ppdefaut.png' %}" class="card-img-top" alt="" width="200" height="200">
+                            {% endif %}
+                        </label>
+                      <br>
+                    </div>
+                    <script>
+                        function preview(){
+                            frame.src = URL.createObjectURL(event.target.files[0]);
+                        }
+                    </script>
+                {% else %}
+                  <form method="post" class="offset-lg-1 col-lg-12 px-2 p-md-5 border rounded-3 bg-light" novalidate>
+                  <h1 class="h3 mb-3 fw-normal">Modification</h1>
+                    {% csrf_token %}
+                    {%for field in form %}
+                    <div class="row">
+                      <label for="{{id_for_label}}" class="col-lg-4  text-left"> {{ field.label }} </label>
+                      {% if field.errors %}
+                          <div class="col-lg-8 col-12 lg-7">
+                            {{ field }}
+                          </div>
+                          <div class="offset-4 col-8 lg-7 is-invalid text-right">
+                            <small class="text-danger">
+                              {% for error in field.errors %}
+                                {{ error|escape }}
+                                <br/>
+                              {% endfor %}
+                            </small>
+                          </div>
+                      {% else %}
+                        <div class="col-lg-8 col-12 lg-7 is-valid">
+                          {{ field }}
+                          <br/>
+                        </div>
+                      {% endif %}
+                    </div>
+                    {% endfor %}
+
+                {% endif %}
+                  <div class="row">
+                    <div class="offset-1 offset-lg-2 col-5 lg-5">
+                      <a href="{% url 'parametre' %}"><button class="w-100 btn btn-lg btn-dark" type="button">Annuler</button></a>
+                    </div>
+                    <div class="col-5 lg-5">
+                      <button class="w-100 btn btn-lg btn-dark" type="submit">Modifier</button>
+                    </div>
+                  </div>
+                  <hr class="my-4">
+                  <small class="text-muted">En cliquant sur se connecter, vous acceptez nos termes d'utilisations.
+                    Ou si vous avez deja un compte vous pouvez <a href="{% url 'inscription' %}">vous connecter</a>
+                  </small>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+
+
+
+
+
+{% endblock %}

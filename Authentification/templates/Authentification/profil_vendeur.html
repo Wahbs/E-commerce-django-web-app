@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<style>
+    @media screen and (min-width: 600px) {
+        .NomProduit {
+            font-size: 20px;
+            font-weight: bold;
+        }
+    }
+    @media screen and (max-width: 600px) {
+        .NomProduit {
+            font-size: 15px;
+            font-weight: bold;
+        }
+    }
+</style>
+<main>
+  <div class="container  mt-2">
+    <h2>Informations</h2>
+    <div class="row">
+      <div class="col mb-5 h-lg-100">
+        <div class="row py-3">
+          <div class="col-lg-5 p-0 m-0">
+              <div class="row shadow-sm p-3 m-3 bg-light rounded-3">
+                  <div class="col-12">
+                      <div class="row">
+                          <div class="col-12 py-2 d-flex justify-content-center align-items-center">
+                              {% if vendeur.Photo_Profil %}
+                              <img src="{{ vendeur.Photo_Profil.url }}" class="rounded-circle" alt="" width="70" height="70">
+                              {% else %}
+                              <img src="{% static 'default/ppdefaut.png' %}" class="rounded-circle" alt="" width="70" height="70">
+                              {% endif %}
+                          </div>
+                          <div class="col-12 py-0 my-0 d-flex justify-content-center">
+                              <small class="h5">{{ vendeur.last_name }} {{ vendeur.first_name }}</small>
+                          </div>
+                          <div class="col-12 py-0 my-0 d-flex justify-content-center">
+                              <small class=""> {{ vendeur.username }}</small>
+                          </div>
+                          <div class="row my-5">
+                              <h5 class="my-2">&Agrave; propos</h5>
+                              <hr class="my-1">
+                              <div class="col-12 py-0 my-0 d-flex justify-content-start">
+                                  <small class=""> Habite à <b>{{ vendeur.Ville }}</b></small>
+                              </div>
+                              <div class="col-12 py-0 my-0 d-flex justify-content-start">
+                                  <small class="fw-italic text-muted"> A rejoint en {{ date_rejoint }}</small>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <hr class="my-4">
+              </div>
+          </div>
+          <div class="col-lg-7 col-12 py-3">
+              <div class="container shadow-sm rounded-3 px-2 px-lg-2 mt-2">
+                  <h2>Articles</h2>
+                <div class="row d-flex justify-content-center">
+                    {% for image in images %}
+                    <div class="col mb-5 m-0 p-0 m-lg-1 p-lg-1 d-flex">
+                        <div class="card h-100 shadow-sm">
+                            <!-- Product image-->
+                            <div class="col d-flex p-0 m-0 justify-content-center align-items-center">
+                                <img class="card-img h-75 w-75" src="{{ image.image.url }}" alt="..." />
+                            </div>
+                            <!-- Product details-->
+                            <div class="card-body p-0 m-0">
+                                <!-- Ville du produit -->
+                                <p class="text-muted m-0 ms-1">{{image.produit.ville_prod}}</p>
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <p class="NomProduit m-0">{{image.produit.designation}}</p>
+                                    <!-- Product price-->
+                                    {% if image.produit.promotion_prod == 'Oui' %}
+                                    <p class="text-muted text-decoration-line-through">{{image.produit.prix_promo}}</p> - {{image.produit.prix_prod}} XAF
+                                    {% else %}
+                                        {{image.produit.prix_prod}} XAF
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <!-- Product actions-->
+                            <div class="card-footer p-1 border-top-0 bg-transparent">
+                                <div class="text-center">
+                                    <a class="btn btn-outline-dark mt-auto w-75" href="{% url 'detail-produit-vente' image.produit.id %}">Details</a>
+                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+{% endblock %}
