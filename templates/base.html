@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>MobileStore</title>
+        <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" />
+        <link rel="stylesheet" href="{% static 'bootstrap-icone/font/bootstrap-icons.css' %}" />
+        <link rel="stylesheet" href="{% static 'image-uploader/dist/image-uploader.min.css' %}" />
+    </head>
+    <body>
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid px-2 px-lg-3">
+                <a class="navbar-brand rounded-3 shadow-sm" href="#!"><span class="bg-info fw-bold p-1 text-white rounded-3">Mobile</span><span class="p-0 m-0 fw-bold">Store</span></a>
+                <button class="navbar-toggler  mx-4 mx-lg-5" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4 mx-4 mx-lg-5">
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'home' %}">Accueil</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#!">A la une !</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#!">A propos</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Shop</a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="{% url 'mes-produits' %}">Mes produits</a></li>
+                                <li><hr class="dropdown-divider" /></li>
+                                <li><a class="dropdown-item" href="#!">Tous les produits</a></li>
+                                <li><a class="dropdown-item" href="#!">Nouvautés</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    {% if request.user.is_authenticated %}
+                        <form class="d-flex mx-4 mx-lg-5">
+                            <a class="btn btn-outline-dark mx-3 mx-lg-4" href="{% url 'mon-panier' %}">
+                                <i class="bi-cart-fill me-1"></i>
+                                Panier
+                                <span class="badge bg-dark text-white ms-1 rounded-pill">{{nb_panier}}</span>
+                            </a>
+                        </form>
+
+                        <a href="{% url 'home-chat' %}" style="text-decoration:none;">
+                            <i class="bi bi-chat-dots-fill text-dark px-3" style="font-size:1.8rem; cursor:pointer;">
+                                {% if nb_message %}
+                                    <span class="position-relative top-0 start-0 translate-middle badge rounded-pill bg-danger" style="font-size:0.5rem;">
+                                        {{nb_message}}
+                                    </span>
+                                {% endif %}
+                            </i>
+                        </a>
+
+                        <a href="{% url 'parametre' %}">
+                          {% if user.Photo_Profil %} <img src="{{ user.Photo_Profil.url }}" width="50" height="50" class="rounded-circle">
+                          {% else %}<img src="{% static 'default/ppdefaut.png' %}" class="rounded-circle" width="50" height="50">
+                          {% endif %}
+                        </a>
+                    {% else %}
+                        <div class="d-flex mx-4 mx-lg-5">
+                            <a href="{% url 'login' %}"><button class="btn btn-outline-dark mx-1 mx-lg-2">Connexion</button></a>
+                            <a href="{% url 'inscription' %}"><button class="btn btn-outline-dark mx-1 mx-lg-2">Inscription</button></a>
+                        </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </nav>
+        {% block content %}
+        {% endblock content %}
+    </body>
+        <!-- Footer-->
+        <footer class="footer py-5 bg-dark">
+            <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Your Website 2022</p></div>
+            <small class="text-muted"> Nous joindre sur
+                <a href="#" target="_blank"> <i class="bi-twitter" style="font-size:1.5rem;">  </i></a>
+                <a href="#" target="_blank"> <i class="bi-whatsapp" style="font-size:1.5rem; color:green">  </i></a>
+                <a href="#" target="_blank"><i class="bi-facebook" style="font-size:1.5rem; color:blue">  </i></a>
+            </small>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="{% static 'js/jquery-3.6.3.min.js' %}"></script>
+        <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+        <!-- <script src="{% static 'image-uploader/dist/image-uploader.min.js' %}"></script>  -->
+        <script src="{% static 'upload-img/img-upload.js' %}"></script>
+
+        <!-- Core theme JS-->
+
+</html>
+
+
